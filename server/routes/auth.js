@@ -1,92 +1,42 @@
 const express = require('express');
 const router = express.Router();
-const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-// --- РЕГИСТРАЦИЯ ---
+const User = require('../models/User');
+
+// Регистрация
 router.post('/register', async (req, res) => {
   try {
-    const { username, email, password } = req.body;
-
-    // Проверка, существует ли пользователь
-    const candidate = await User.findOne({ $or: [{ email }, { username }] });
-    if (candidate) {
-      return res.status(400).json({ message: 'Пользователь с таким email или именем уже существует' });
-    }
-
-    // Хешируем пароль
-    const hashedPassword = await bcrypt.hash(password, 12);
-    const user = new User({ username, email, password: hashedPassword });
-
+    const { name, email, password } = req.body;
+    const candidate = await User.findOne({ email });
+    if (candidate) return res.status(400).json({ message: 'Email уже занят' });
+    const hash = await bcrypt.hash(password, 10);
+    const user = new User({ name, email, password: hash });
     await user.save();
-    res.status(201).json({ message: 'Пользователь успешно создан!' });
-
+    return res.status(201).json({ message: 'Пользователь зарегистрирован' });
   } catch (e) {
-    res.status(500).json({ message: 'Что-то пошло не так, попробуйте снова' });
+    res.status(500).json({ message: 'Ошибка сервера' });
   }
 });
 
-// --- АВТОРИЗАЦИЯ ---
+// Вход
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
-
     const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(400).json({ message: 'Пользователь не найден' });
-    }
-
+    if (!user) return res.status(400).json({ message: 'Неверный email или пароль' });
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(400).json({ message: 'Неверный пароль, попробуйте снова' });
-    }
-
-    // Создаем JWT токен
+    if (!isMatch) return res.status(400).json({ message: 'Неверный email или пароль' });
     const token = jwt.sign(
-      { userId: user.id },
-      'your_jwt_secret_key', // ВАЖНО: В реальном проекте используйте .env файл!
+      { userId: user._id, name: user.name, email: user.email },
+      process.env.JWT_SECRET || 'devsecretkey',
       { expiresIn: '1h' }
     );
-
-    res.json({ token, userId: user.id, username: user.username });
-
+    res.json({ token, user: { name: user.name, email: user.email } });
   } catch (e) {
-    res.status(500).json({ message: 'Что-то пошло не так, попробуйте снова' });
+    res.status(500).json({ message: 'Ошибка сервера' });
   }
 });
-
-
-// --- Middleware для защиты роутов ---
-const authMiddleware = (req, res, next) => {
-    if (req.method === 'OPTIONS') {
-        return next();
-    }
-    try {
-        const token = req.headers.authorization.split(' ')[1]; // "Bearer TOKEN"
-        if (!token) {
-            return res.status(401).json({ message: 'Нет авторизации' });
-        }
-        const decoded = jwt.verify(token, 'your_jwt_secret_key');
-        req.user = decoded;
-        next();
-    } catch (e) {
-        res.status(401).json({ message: 'Нет авторизации' });
-    }
-};
-
-// --- Получение данных профиля (защищенный роут) ---
-router.get('/profile', authMiddleware, async (req, res) => {
-    try {
-        const user = await User.findById(req.user.userId).select('-password'); // Найти пользователя по ID из токена
-        if (!user) {
-            return res.status(404).json({ message: "Пользователь не найден" });
-        }
-        res.json(user);
-    } catch (e) {
-        res.status(500).json({ message: 'Ошибка сервера' });
-    }
-});
-
 
 module.exports = router;

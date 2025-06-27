@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+import img2 from "../images/2.png";
 
 function Contacts() {
   const [formData, setFormData] = useState({
@@ -15,7 +16,6 @@ function Contacts() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Здесь можно отправить данные на сервер через API
     console.log(formData);
     setSubmitted(true);
   };
@@ -23,9 +23,9 @@ function Contacts() {
   return (
     <div>
       <h1 className="text-3xl font-bold mb-4">Контакты</h1>
-      <p className="mb-4">Телефон: +7 123 456-78-90</p>
-      <p className="mb-4">Email: info@example.com</p>
-      <p className="mb-4">Адрес: ул. Примерная, 1, Москва</p>
+      <p className="mb-4">Телефон: (912) 00-55-000</p>
+      <p className="mb-4">Email: mastervann@mail.ru</p>
+      <p className="mb-4">Адрес:г. Москва, ул. Молодежная, 11, к. 15</p>
 
       <h2 className="text-2xl font-bold mb-4">Обратная связь</h2>
       {submitted ? (
@@ -82,16 +82,12 @@ function Contacts() {
       )}
       <div className="mt-8">
         <h2 className="text-2xl font-bold mb-4">Наше местоположение</h2>
-        {/* Можно встроить Google Maps */}
-        <iframe
-          title="map"
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2436.3450437849994!2d37.616667!3d55.750000!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x46b54a64b9d89aeb%3A0xca3dcd2149e2a832!2sMoscow%20City!5e0!3m2!1sen!2sru!4v1614093641808!5m2!1sen!2sru"
+        <img
+          src={img2}
           width="100%"
           height="300"
           style={{ border: 0 }}
-          allowFullScreen=""
-          loading="lazy"
-        ></iframe>
+        ></img>
       </div>
     </div>
   );

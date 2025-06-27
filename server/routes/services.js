@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Service = require('../models/Service');
 
-// Получить все услуги
+
 router.get('/', async (req, res) => {
   try {
     const services = await Service.find();
@@ -12,7 +12,6 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Добавить новую услугу (например, для административного интерфейса)
 router.post('/', async (req, res) => {
   const service = new Service({
     name: req.body.name,

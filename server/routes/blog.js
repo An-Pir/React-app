@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const BlogPost = require('../models/BlogPost');
 
-// Получить все статьи
+
 router.get('/', async (req, res) => {
   try {
     const posts = await BlogPost.find();
@@ -12,7 +12,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Добавить новую статью
+
 router.post('/', async (req, res) => {
   const post = new BlogPost({
     title: req.body.title,

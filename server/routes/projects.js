@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Project = require('../models/Project');
 
-// Получить все проекты
+
 router.get('/', async (req, res) => {
   try {
     const projects = await Project.find();
@@ -12,7 +12,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Добавить новый проект
+
 router.post('/', async (req, res) => {
   const project = new Project({
     title: req.body.title,
