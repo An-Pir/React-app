@@ -78,9 +78,11 @@ export default function DashboardPage() {
           {msg && <div className="my-3 p-2 rounded-lg bg-green-100 text-green-700 text-sm border border-green-300">{msg}</div>}
         </div>
 
+        {user.role === 'admin' && (
         <div className="mt-8">
           <ServiceCreateForm />
         </div>
+      )}
       </div>
     );
   }

@@ -48,7 +48,7 @@ const ServiceCreateForm = () => {
 
   return (
     <div className="max-w-md mx-auto my-8 p-6 bg-white rounded-lg shadow-lg">
-      <h2 className="text-2xl font-bold mb-5">🛠️ Создать новую услугу</h2>
+      <h2 className="text-2xl font-bold mb-5"> Создать новую услугу</h2>
       {message && (
         <div
           className={`mb-3 p-2 rounded
